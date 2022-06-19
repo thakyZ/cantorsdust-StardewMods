@@ -2,7 +2,7 @@
 
 # Release notes
 ## Upcoming release
-* Improved translations. Thanks to Puffeeydii (updated Chinese)!
+* Improved translations. Thanks to Puffeeydii (updated Chinese) and tqdv (added French)!
 
 ## 2.7.2
 Released 25 May 2022 for SMAPI 3.13.0 or later. Updated by Pathoschild.
