@@ -2,6 +2,7 @@
 
 # Release notes
 ## Upcoming release
+* Re-enabled keybinds when viewing a cutscene, except when a textbox is accepting input.
 * Improved translations. Thanks to Puffeeydii (updated Chinese) and tqdv (added French)!
 
 ## 2.7.2
