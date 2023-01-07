@@ -2,6 +2,7 @@
 
 # Release notes
 ## Upcoming release
+* Updated for the upcoming Generic Mod Config Menu 2.0.0.
 * Improved translations. Thanks to Timur13240 (updated Russian)!
 
 ## 2.7.4

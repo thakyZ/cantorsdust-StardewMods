@@ -1,6 +1,9 @@
 ﻿﻿[← back to readme](README.md)
 
 # Release notes
+## Upcoming release
+* Updated for the upcoming Generic Mod Config Menu 2.0.0.
+
 ## 1.8.2
 Released 25 May 2022 for SMAPI 3.13.0 or later. Updated by Pathoschild.
 
