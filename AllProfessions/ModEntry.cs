@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using AllProfessions.Framework;
+using cantorsdust.Common;
 using StardewModdingAPI;
 using StardewModdingAPI.Events;
 using StardewValley;
@@ -33,6 +34,7 @@ namespace AllProfessions
         public override void Entry(IModHelper helper)
         {
             I18n.Init(helper.Translation);
+            CommonHelper.RemoveObsoleteFiles(this, "AllProfessions.pdb");
 
             // read config
             this.Config = helper.ReadConfig<ModConfig>();
