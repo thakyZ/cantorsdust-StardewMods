@@ -12,6 +12,15 @@ namespace TimeSpeed.Framework
         /*********
         ** Accessors
         *********/
+        /// <summary>Whether only the host can manipulate time.</summary>
+        public bool HostOnly { get; set; } = true;
+
+        /// <summary>Whether to use a voting system to allow clients to pause.</summary>
+        public bool ClientVote { get; set; } = false;
+
+        /// <summary>The threshold of how many yes votes to succeed on a client vote.</summary>
+        public double ClientVoteThreshold { get; set; } = 1.0;
+
         /// <summary>The time at which to freeze time everywhere (or <c>null</c> to disable this). This should be 24-hour military time (e.g. 800 for 8am, 1600 for 8pm, etc).</summary>
         public int? AnywhereAtTime { get; set; }
 
@@ -29,6 +38,9 @@ namespace TimeSpeed.Framework
 
         /// <summary>Whether to freeze time in the Volcano Dungeon.</summary>
         public bool VolcanoDungeon { get; set; } = false;
+
+        /// <summary>Whether to pause during events.</summary>
+        public bool DuringEvents { get; set; } = false;
 
         /// <summary>The names of custom locations in which to freeze time.</summary>
         /// <remarks>Location names can be seen in-game using the <a href="https://www.nexusmods.com/stardewvalley/mods/679">Debug Mode</a> mod.</remarks>
@@ -84,8 +96,8 @@ namespace TimeSpeed.Framework
         [OnDeserialized]
         private void OnDeserializedMethod(StreamingContext context)
         {
-            this.ByLocationName = new(this.ByLocationName ?? new(), StringComparer.OrdinalIgnoreCase);
-            this.ExceptLocationNames = new(this.ExceptLocationNames ?? new(), StringComparer.OrdinalIgnoreCase);
+            this.ByLocationName = new(this.ByLocationName ?? [], StringComparer.OrdinalIgnoreCase);
+            this.ExceptLocationNames = new(this.ExceptLocationNames ?? [], StringComparer.OrdinalIgnoreCase);
         }
     }
 }

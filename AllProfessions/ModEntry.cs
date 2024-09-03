@@ -21,10 +21,10 @@ namespace AllProfessions
         private readonly string DataFileHash = "a3b6882bf1d9026055423b73cbe05e50";
 
         /// <summary>The professions by skill and level requirement.</summary>
-        private ModDataProfessions[] ProfessionMap;
+        private ModDataProfessions[]? ProfessionMap;
 
         /// <summary>The mod configuration.</summary>
-        private ModConfig Config;
+        private ModConfig? Config;
 
 
         /*********
@@ -73,13 +73,14 @@ namespace AllProfessions
         /// <inheritdoc cref="IGameLoopEvents.GameLaunched"/>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
+        private void OnGameLaunched(object? sender, GameLaunchedEventArgs e)
         {
-            GenericModConfigMenuIntegration.Register(this.ModManifest, this.Helper.ModRegistry, this.Monitor, this.ProfessionMap,
-                getConfig: () => this.Config,
-                reset: () => this.Config = new(),
+            GenericModConfigMenuIntegration.Register(this.ModManifest, this.Helper.ModRegistry, this.Monitor, this.ProfessionMap ?? [],
+                getConfig: () => this.Config ?? new ModConfig(),
+                reset: () => this.Config = new ModConfig(),
                 save: () =>
                 {
+                    this.Config ??= new ModConfig();
                     this.Config.Normalize(this.Monitor);
                     this.Helper.WriteConfig(this.Config);
                 }
@@ -89,7 +90,7 @@ namespace AllProfessions
         /// <inheritdoc cref="IGameLoopEvents.DayStarted"/>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void OnDayStarted(object sender, DayStartedEventArgs e)
+        private void OnDayStarted(object? sender, DayStartedEventArgs e)
         {
             // When the player loads a saved game, or after the overnight level screen,
             // add any professions the player should have but doesn't.
@@ -112,14 +113,14 @@ namespace AllProfessions
 
         /// <summary>Get the professions by skill and level requirement.</summary>
         /// <param name="data">The underlying mod data.</param>
-        private IEnumerable<ModDataProfessions> GetProfessionMap(ModData data)
+        private IEnumerable<ModDataProfessions> GetProfessionMap(ModData? data)
         {
             if (data?.ProfessionsToGain == null)
                 yield break;
 
             foreach (ModDataProfessions set in data.ProfessionsToGain)
             {
-                if (set.Professions != null && set.Professions.Any())
+                if (set.Professions?.Any() == true)
                     yield return set;
             }
         }
@@ -128,13 +129,13 @@ namespace AllProfessions
         private void AddMissingProfessions()
         {
             // get missing professions
-            List<Profession> expectedProfessions = new List<Profession>();
-            foreach (ModDataProfessions entry in this.ProfessionMap)
+            List<Profession> expectedProfessions = [];
+            foreach (ModDataProfessions entry in this.ProfessionMap ?? [])
             {
                 if (Game1.player.getEffectiveSkillLevel((int)entry.Skill) >= entry.Level)
                 {
                     expectedProfessions.AddRange(
-                        entry.Professions.Where(profession => !this.Config.ShouldIgnore(profession))
+                        entry.Professions.Where(profession => this.Config?.ShouldIgnore(profession) != true)
                     );
                 }
             }

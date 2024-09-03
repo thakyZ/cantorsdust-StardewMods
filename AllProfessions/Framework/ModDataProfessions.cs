@@ -10,6 +10,6 @@ namespace AllProfessions.Framework
         public int Level { get; set; }
 
         /// <summary>The professions to gain.</summary>
-        public Profession[] Professions { get; set; }
+        public Profession[] Professions { get; set; } = [];
     }
 }

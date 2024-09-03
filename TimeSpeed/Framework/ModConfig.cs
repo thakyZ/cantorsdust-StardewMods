@@ -1,6 +1,7 @@
 using System.Runtime.Serialization;
 using StardewValley;
 
+// ReSharper disable MemberCanBePrivate.Global
 namespace TimeSpeed.Framework
 {
     /// <summary>The mod configuration model.</summary>
@@ -9,11 +10,14 @@ namespace TimeSpeed.Framework
         /*********
         ** Accessors
         *********/
-        /// <summary>Whether to change tick length on festival days.</summary>
+        /// <summary>Whether to change tick Length on festival days.</summary>
         public bool EnableOnFestivalDays { get; set; } = true;
 
         /// <summary>Whether to show a message about the time settings when you enter a location.</summary>
         public bool LocationNotify { get; set; } = false;
+
+        /// <summary>Whether to show vote messages.</summary>
+        public bool DisplayVotePauseMessages { get; set; } = false;
 
         /// <summary>The time speed for in-game locations, measured in seconds per in-game minute.</summary>
         public ModSecondsPerMinuteConfig SecondsPerMinute { get; set; } = new();

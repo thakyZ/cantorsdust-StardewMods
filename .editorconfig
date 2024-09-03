@@ -8,9 +8,21 @@ root: true
 [*]
 indent_style = space
 indent_size = 4
+tab_width = 4
+end_of_line = crlf
 insert_final_newline = true
 trim_trailing_whitespace = true
 charset = utf-8
+
+
+##########
+## Visual Studio Spell Checker
+## documentation: https://ewsoftware.github.io/VSSpellChecker/
+##########
+vsspell_section_id = 30681790c2c04e40b3a5a5491b921b5e
+vsspell_dictionary_languages_30681790c2c04e40b3a5a5491b921b5e = inherited,en-US
+vsspell_ignored_words_30681790c2c04e40b3a5a5491b921b5e = cantorsdust
+vsspell_ignored_keywords_30681790c2c04e40b3a5a5491b921b5e = cantorsdust
 
 [*.{csproj,nuspec,targets}]
 indent_size = 2
@@ -24,6 +36,34 @@ charset = utf-8-bom
 
 [*.{ttinclude,tt}]
 insert_final_newline = false
+
+##########
+## C# & VisualBasic formatting
+## documentation: https://docs.microsoft.com/en-us/visualstudio/ide/editorconfig-code-style-settings-reference
+##########
+[*.{cs,vb}]
+#### Naming styles ####
+
+# Naming rules
+
+dotnet_naming_rule.interface_should_be_begins_with_i.severity = none
+dotnet_naming_rule.types_should_be_pascal_case.severity = none
+dotnet_naming_rule.non_field_members_should_be_pascal_case.severity = none
+
+dotnet_style_operator_placement_when_wrapping = beginning_of_line
+dotnet_style_coalesce_expression = true:suggestion
+dotnet_style_null_propagation = true:suggestion
+dotnet_style_prefer_is_null_check_over_reference_equality_method = true:suggestion
+dotnet_style_prefer_auto_properties = true:silent
+dotnet_style_object_initializer = true:suggestion
+dotnet_style_collection_initializer = true:suggestion
+dotnet_style_prefer_simplified_boolean_expressions = true:suggestion
+dotnet_style_prefer_conditional_expression_over_assignment = false:suggestion
+dotnet_style_prefer_conditional_expression_over_return = false:suggestion
+dotnet_style_explicit_tuple_names = true:suggestion
+dotnet_style_prefer_inferred_tuple_names = true:suggestion
+dotnet_style_prefer_inferred_anonymous_type_member_names = true:suggestion
+dotnet_style_prefer_compound_assignment = false:suggestion
 
 ##########
 ## C# formatting
@@ -71,7 +111,85 @@ csharp_style_expression_bodied_accessors = true:suggestion
 csharp_style_inlined_variable_declaration = true:warning
 
 # avoid superfluous braces
-csharp_prefer_braces = false:hint
+csharp_prefer_braces = when_multiline:silent
+
+csharp_using_directive_placement = outside_namespace:suggestion
+csharp_prefer_simple_using_statement = false:silent
+csharp_style_namespace_declarations = file_scoped:silent
+csharp_style_prefer_method_group_conversion = true:silent
+csharp_style_prefer_top_level_statements = false:warning
+csharp_style_prefer_primary_constructors = false:suggestion
+csharp_style_expression_bodied_operators = false:silent
+csharp_style_expression_bodied_lambdas = false:silent
+csharp_style_expression_bodied_local_functions = false:silent
+csharp_indent_labels = flush_left
+
+dotnet_style_coalesce_expression = true:suggestion
+dotnet_style_null_propagation = true:suggestion
+dotnet_style_prefer_is_null_check_over_reference_equality_method = true:suggestion
+dotnet_style_prefer_auto_properties = true:silent
+dotnet_style_object_initializer = true:suggestion
+dotnet_style_collection_initializer = true:suggestion
+dotnet_style_prefer_simplified_boolean_expressions = true:suggestion
+dotnet_style_prefer_conditional_expression_over_assignment = false:suggestion
+dotnet_style_prefer_conditional_expression_over_return = false:suggestion
+dotnet_style_explicit_tuple_names = true:suggestion
+dotnet_style_prefer_inferred_tuple_names = true:suggestion
+dotnet_style_prefer_inferred_anonymous_type_member_names = true:suggestion
+dotnet_style_prefer_compound_assignment = false:suggestion
+dotnet_style_operator_placement_when_wrapping = beginning_of_line
+
+#### Naming styles ####
+
+# Naming rules
+
+dotnet_naming_rule.async_method_should_be_ends_with_async.severity = none
+dotnet_naming_rule.private_or_internal_readonly_should_be_lowercase_begins_with_underscore.severity = none
+dotnet_naming_rule.private_or_internal_constants_should_be_uppercase_begins_with_underscore.severity = none
+dotnet_naming_rule.private_or_internal_field_should_be_lowercase_begins_with_underscore.severity = none
+dotnet_naming_rule.private_or_internal_static_field_should_be_lowercase_begins_with_underscore.severity = none
+dotnet_naming_rule.private_or_internal_static_readonly_should_be_uppercase_begins_with_underscore.severity = none
+dotnet_naming_rule.event_should_be_pascal_case.severity = none
+dotnet_naming_rule.parameter_should_be__camelcase.severity = none
+
+# CA1822: Mark members as static
+dotnet_diagnostic.CA1822.severity = none
+
+# IDE0002: Simplify Member Access
+dotnet_diagnostic.IDE0002.severity = none
+
+# IDE1006: Naming Styles
+dotnet_diagnostic.IDE1006.severity = none
+
+# RCS1003: Add braces to if-else (when expression spans over multiple lines)
+dotnet_diagnostic.RCS1003.severity = none
+
+# RCS1021: Convert lambda expression body to expression body
+dotnet_diagnostic.RCS1021.severity = none
+
+# RCS1058: Use compound assignment
+dotnet_diagnostic.RCS1058.severity = none
+
+# RCS1205: Order named arguments according to the order of parameters
+dotnet_diagnostic.RCS1205.severity = none
+
+# S1199: Nested code blocks should not be used
+dotnet_diagnostic.S1199.severity = none
+
+# S1244: Floating point numbers should not be tested for equality
+dotnet_diagnostic.S1244.severity = none
+
+# S2696: Instance members should not write to "static" fields
+dotnet_diagnostic.S2696.severity = none
+
+# S3010: Static fields should not be updated in constructors
+dotnet_diagnostic.S3010.severity = none
+
+# S3358: Ternary operators should not be nested
+dotnet_diagnostic.S3358.severity = none
+
+# S3458: Empty "case" clauses that fall through to the "default" should be omitted
+dotnet_diagnostic.S3458.severity = none
 
 ##########
 ## Column guidelines

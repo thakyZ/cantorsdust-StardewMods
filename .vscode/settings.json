@@ -1,0 +1,9 @@
+{
+  "cSpell.words": [
+    "cantorsdust",
+  ],
+  "editor.indentSize": 4,
+  "files.associations": {
+    "*.json": "jsonc"
+  }
+}

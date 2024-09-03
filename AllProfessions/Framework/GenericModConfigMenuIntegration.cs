@@ -24,7 +24,7 @@ namespace AllProfessions.Framework
         public static void Register(IManifest manifest, IModRegistry modRegistry, IMonitor monitor, ModDataProfessions[] professionData, Func<ModConfig> getConfig, Action reset, Action save)
         {
             // get API
-            IGenericModConfigMenuApi api = IntegrationHelper.GetGenericModConfigMenu(modRegistry, monitor);
+            IGenericModConfigMenuApi? api = IntegrationHelper.GetGenericModConfigMenu(modRegistry, monitor);
             if (api == null)
                 return;
 
@@ -132,6 +132,6 @@ namespace AllProfessions.Framework
         /// <param name="Skill">The skill.</param>
         /// <param name="Level">The skill level requirement.</param>
         /// <param name="Professions">The linked professions.</param>
-        private record ProfessionMapping(Skill Skill, int Level, Profession[] Professions);
+        private sealed record ProfessionMapping(Skill Skill, int Level, Profession[] Professions);
     }
 }

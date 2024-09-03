@@ -2,6 +2,9 @@ using System;
 using System.Linq;
 using cantorsdust.Common.Integrations;
 using StardewModdingAPI;
+using GenericModConfigMenu;
+using TimeSpeed.Framework.Managers;
+using StardewValley;
 
 namespace TimeSpeed.Framework
 {
@@ -21,7 +24,7 @@ namespace TimeSpeed.Framework
         public static void Register(IManifest manifest, IModRegistry modRegistry, IMonitor monitor, Func<ModConfig> getConfig, Action reset, Action save)
         {
             // get API
-            IGenericModConfigMenuApi api = IntegrationHelper.GetGenericModConfigMenu(modRegistry, monitor);
+            IGenericModConfigMenuApi? api = IntegrationHelper.GetGenericModConfigMenu(modRegistry, monitor);
             if (api == null)
                 return;
 
@@ -102,12 +105,39 @@ namespace TimeSpeed.Framework
 
             // freeze time
             api.AddSectionTitle(manifest, I18n.Config_FreezeTime);
+            api.AddBoolOption(
+                manifest,
+                name: I18n.Config_EnableHostOnly_Name,
+                tooltip: I18n.Config_EnableHostOnly_Desc,
+                getValue: () => getConfig().FreezeTime.HostOnly,
+                setValue: value => getConfig().FreezeTime.HostOnly = value,
+                fieldId: "enableHostOnly"
+            );
+            api.AddBoolOption(
+                manifest,
+                name: I18n.Config_ClientVote_Name,
+                tooltip: I18n.Config_ClientVote_Desc,
+                getValue: () => getConfig().FreezeTime.ClientVote,
+                setValue: value => getConfig().FreezeTime.ClientVote = value,
+                fieldId: "enableClientVote"
+            );
+            api.AddNumberOption(
+                manifest,
+                name: I18n.Config_ClientVoteThreshold_Name,
+                tooltip: I18n.Config_ClientVoteThreshold_Desc,
+                getValue: () => (int)(getConfig().FreezeTime.ClientVoteThreshold * 100.0),
+                setValue: value => getConfig().FreezeTime.ClientVoteThreshold = Math.Round(value / 100.0, 2),
+                min: 0,
+                max: 100,
+                interval: 1,
+                fieldId: "clientVoteThreshold"
+            );
             api.AddNumberOption(
                 manifest,
                 name: I18n.Config_AnywhereAtTime_Name,
                 tooltip: I18n.Config_AnywhereAtTime_Desc,
                 getValue: () => getConfig().FreezeTime.AnywhereAtTime ?? 2600,
-                setValue: value => getConfig().FreezeTime.AnywhereAtTime = (value == 2600 ? null : value),
+                setValue: value => getConfig().FreezeTime.AnywhereAtTime = value == 2600 ? null : value,
                 min: 600,
                 max: 2600
             );
@@ -145,6 +175,13 @@ namespace TimeSpeed.Framework
                 tooltip: I18n.Config_FreezeTimeVolcanoDungeon_Desc,
                 getValue: () => getConfig().FreezeTime.VolcanoDungeon,
                 setValue: value => getConfig().FreezeTime.VolcanoDungeon = value
+            );
+            api.AddBoolOption(
+                manifest,
+                name: I18n.Config_FreezeTimeDuringEvents_Name,
+                tooltip: I18n.Config_FreezeTimeDuringEvents_Desc,
+                getValue: () => getConfig().FreezeTime.DuringEvents,
+                setValue: value => getConfig().FreezeTime.DuringEvents = value
             );
             api.AddTextOption(
                 manifest,
@@ -200,6 +237,22 @@ namespace TimeSpeed.Framework
                 tooltip: I18n.Config_ReloadKey_Desc,
                 getValue: () => getConfig().Keys.ReloadConfig,
                 setValue: value => getConfig().Keys.ReloadConfig = value
+            );
+            api.OnFieldChanged(
+                manifest,
+                (name, value) => {
+                    switch(name) {
+                        case "enableHostOnly" when value is bool bValue && ModEntry.MessageManager is not null:
+                            ModEntry.MessageManager.SendTimeConfigStateMessage(Game1.player, hostOnly: bValue);
+                            break;
+                        case "enableClientVote" when value is bool cValue && ModEntry.MessageManager is not null:
+                            ModEntry.MessageManager.SendTimeConfigStateMessage(Game1.player, voteEnabled: cValue);
+                            break;
+                        case "clientVoteThreshold" when value is float fValue && ModEntry.MessageManager is not null:
+                            ModEntry.MessageManager.SendTimeConfigStateMessage(Game1.player, voteThreshold: fValue);
+                            break;
+                    }
+                }
             );
         }
     }

@@ -1,4 +1,6 @@
 using System;
+using System.Security.Cryptography;
+
 using StardewValley;
 
 namespace TimeSpeed.Framework
@@ -13,12 +15,13 @@ namespace TimeSpeed.Framework
         private double PreviousProgress;
 
         /// <summary>The handlers to notify when the tick progress changes.</summary>
-        private event EventHandler<TickProgressChangedEventArgs> Handlers;
+        private event EventHandler<TickProgressChangedEventArgs>? Handlers;
 
 
         /*********
         ** Accessors
         *********/
+        // ReSharper disable once MemberCanBeMadeStatic.Global
         /// <summary>The game's default tick interval in milliseconds for the current location.</summary>
         public int CurrentDefaultTickInterval => 7000 + (Game1.currentLocation?.ExtraMillisecondsPerInGameMinute ?? 0);
 

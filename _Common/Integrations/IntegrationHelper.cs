@@ -1,4 +1,5 @@
 using StardewModdingAPI;
+using GenericModConfigMenu;
 
 namespace cantorsdust.Common.Integrations
 {
@@ -15,11 +16,11 @@ namespace cantorsdust.Common.Integrations
         /// <param name="modRegistry">An API for fetching metadata about loaded mods.</param>
         /// <param name="monitor">Encapsulates monitoring and logging.</param>
         /// <returns>Returns the mod's API interface if valid, else null.</returns>
-        public static TInterface GetValidatedApi<TInterface>(string label, string modId, string minVersion, IModRegistry modRegistry, IMonitor monitor)
+        private static TInterface? GetValidatedApi<TInterface>(string label, string modId, string minVersion, IModRegistry modRegistry, IMonitor monitor)
             where TInterface : class
         {
             // check mod installed
-            IManifest mod = modRegistry.Get(modId)?.Manifest;
+            IManifest? mod = modRegistry.Get(modId)?.Manifest;
             if (mod == null)
                 return null;
 
@@ -31,21 +32,18 @@ namespace cantorsdust.Common.Integrations
             }
 
             // get API
-            var api = modRegistry.GetApi<TInterface>(modId);
-            if (api == null)
-            {
-                monitor.Log($"Detected {label}, but couldn't fetch its API. Disabled integration with that mod.", LogLevel.Warn);
-                return null;
-            }
+            TInterface? api = modRegistry.GetApi<TInterface>(modId);
+            if (api != null) return api;
+            monitor.Log($"Detected {label}, but couldn't fetch its API. Disabled integration with that mod.", LogLevel.Warn);
+            return null;
 
-            return api;
         }
 
         /// <summary>Get Generic Mod Config Menu's API if it's installed and valid.</summary>
         /// <param name="modRegistry">An API for fetching metadata about loaded mods.</param>
         /// <param name="monitor">Encapsulates monitoring and logging.</param>
         /// <returns>Returns the API interface if valid, else null.</returns>
-        public static IGenericModConfigMenuApi GetGenericModConfigMenu(IModRegistry modRegistry, IMonitor monitor)
+        public static IGenericModConfigMenuApi? GetGenericModConfigMenu(IModRegistry modRegistry, IMonitor monitor)
         {
             return IntegrationHelper.GetValidatedApi<IGenericModConfigMenuApi>(
                 label: "Generic Mod Config Menu",
