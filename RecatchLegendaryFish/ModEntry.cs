@@ -1,5 +1,3 @@
-using System.Linq;
-
 using cantorsdust.Common;
 using RecatchLegendaryFish.Framework;
 using StardewModdingAPI;
@@ -16,7 +14,7 @@ namespace RecatchLegendaryFish
         ** Properties
         *********/
         /// <summary>The mod configuration.</summary>
-        private ModConfig? Config;
+        private ModConfig Config;
 
         /// <summary>Whether the mod is currently enabled.</summary>
         private bool IsEnabled = true;
@@ -48,21 +46,27 @@ namespace RecatchLegendaryFish
         /// <inheritdoc cref="IContentEvents.AssetRequested"/>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void OnAssetRequested(object? sender, AssetRequestedEventArgs e)
+        private void OnAssetRequested(object sender, AssetRequestedEventArgs e)
         {
             if (this.IsEnabled && e.Name.IsEquivalentTo("Data/Locations"))
             {
                 e.Edit(
                     asset =>
                     {
-                        foreach (LocationData location in asset.AsDictionary<string, LocationData>().Data.Values.Where(location => location.Fish is not null))
+                        foreach (LocationData location in asset.AsDictionary<string, LocationData>().Data.Values)
                         {
-                            foreach (SpawnFishData fish in location.Fish.Where(fish => fish.CatchLimit == 1 && ItemContextTagManager.HasBaseTag(fish.ItemId, "fish_legendary")))
+                            if (location.Fish is null)
+                                continue;
+
+                            foreach (SpawnFishData fish in location.Fish)
                             {
                                 // Known limitation: there's no good way to handle ItemId being an item query instead
                                 // of an item ID, but all vanilla legendary fish (and likely most modded ones) use an
                                 // item ID.
-                                fish.CatchLimit = -1;
+                                if (fish.CatchLimit == 1 && ItemContextTagManager.HasBaseTag(fish.ItemId, "fish_legendary"))
+                                {
+                                    fish.CatchLimit = -1;
+                                }
                             }
                         }
                     },
@@ -74,25 +78,21 @@ namespace RecatchLegendaryFish
         /// <inheritdoc cref="IGameLoopEvents.GameLaunched"/>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void OnGameLaunched(object? sender, GameLaunchedEventArgs e)
+        private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
             GenericModConfigMenuIntegration.Register(this.ModManifest, this.Helper.ModRegistry, this.Monitor,
-                getConfig: () => this.Config ?? new ModConfig(),
-                reset: () => this.Config = new ModConfig(),
-                save: () => {
-                    if (this.Config is null)
-                        return;
-                    this.Helper.WriteConfig(this.Config);
-                }
+                getConfig: () => this.Config,
+                reset: () => this.Config = new(),
+                save: () => this.Helper.WriteConfig(this.Config)
             );
         }
 
         /// <inheritdoc cref="IInputEvents.ButtonsChanged"/>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void OnButtonsChanged(object? sender, ButtonsChangedEventArgs e)
+        private void OnButtonsChanged(object sender, ButtonsChangedEventArgs e)
         {
-            if (Context.IsPlayerFree && this.Config?.ToggleKey.JustPressed() == true)
+            if (Context.IsPlayerFree && this.Config.ToggleKey.JustPressed())
                 this.OnToggle();
         }
 
@@ -102,7 +102,7 @@ namespace RecatchLegendaryFish
             this.IsEnabled = !this.IsEnabled;
             this.Helper.GameContent.InvalidateCache("Data/Locations");
 
-            string? key = this.Config?.ToggleKey.GetKeybindCurrentlyDown()?.ToString();
+            string key = this.Config.ToggleKey.GetKeybindCurrentlyDown()?.ToString();
             string message = this.IsEnabled
                 ? I18n.Message_Enabled(key: key)
                 : I18n.Message_Disabled(key: key);

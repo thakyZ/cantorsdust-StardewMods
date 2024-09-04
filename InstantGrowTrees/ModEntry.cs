@@ -15,7 +15,7 @@ namespace InstantGrowTrees
         ** Properties
         *********/
         /// <summary>The mod configuration.</summary>
-        private ModConfig? Config;
+        private ModConfig Config;
 
         /// <summary>The number of days after a tree is fully grown until it reaches iridium quality.</summary>
         /// <remarks>Fruit trees increase in quality once per year, so iridium is 30 days * 4 seasons * 3 quality increases.</remarks>
@@ -46,23 +46,19 @@ namespace InstantGrowTrees
         /// <inheritdoc cref="IGameLoopEvents.GameLaunched"/>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void OnGameLaunched(object? sender, GameLaunchedEventArgs e)
+        private void OnGameLaunched(object sender, GameLaunchedEventArgs e)
         {
             GenericModConfigMenuIntegration.Register(this.ModManifest, this.Helper.ModRegistry, this.Monitor,
-                getConfig: () => this.Config ?? new ModConfig(),
-                reset: () => this.Config = new ModConfig(),
-                save: () => {
-                    if (this.Config is null)
-                        return;
-                    this.Helper.WriteConfig(this.Config);
-                }
+                getConfig: () => this.Config,
+                reset: () => this.Config = new(),
+                save: () => this.Helper.WriteConfig(this.Config)
             );
         }
 
         /// <inheritdoc cref="IGameLoopEvents.DayStarted"/>
         /// <param name="sender">The event sender.</param>
         /// <param name="e">The event arguments.</param>
-        private void OnDayStarted(object? sender, DayStartedEventArgs e)
+        private void OnDayStarted(object sender, DayStartedEventArgs e)
         {
             // When the player loads a saved game, or after the overnight save,
             // check for any trees that should be grown.
@@ -76,9 +72,9 @@ namespace InstantGrowTrees
         private void GrowTrees()
         {
             // collect config
-            bool ageFruitTrees = this.Config?.FruitTrees.InstantlyAge == true;
-            bool growFruitTrees = this.Config?.FruitTrees.InstantlyGrow == true;
-            bool growOtherTrees = this.Config?.NonFruitTrees.InstantlyGrow == true;
+            bool ageFruitTrees = this.Config.FruitTrees.InstantlyAge;
+            bool growFruitTrees = this.Config.FruitTrees.InstantlyGrow;
+            bool growOtherTrees = this.Config.NonFruitTrees.InstantlyGrow;
             if (!ageFruitTrees && !growFruitTrees && !growOtherTrees)
                 return;
 
@@ -112,7 +108,7 @@ namespace InstantGrowTrees
         private void GrowTree(Tree tree)
         {
             // skip if already grown
-            if (tree.growthStage.Value >= Tree.treeStage || this.Config is null)
+            if (tree.growthStage.Value >= Tree.treeStage)
                 return;
 
             // get max size here
@@ -132,9 +128,6 @@ namespace InstantGrowTrees
         /// <param name="tile">The tree's tile position.</param>
         private void GrowFruitTree(FruitTree tree, GameLocation location, Vector2 tile)
         {
-            if (this.Config is null)
-                return;
-
             FruitTreeConfig config = this.Config.FruitTrees;
 
             // skip if already grown
@@ -144,20 +137,19 @@ namespace InstantGrowTrees
                 return;
 
             // grow tree of not blocked
-            if (!config.InstantlyGrowWhenInvalid && FruitTree.IsGrowthBlocked(tree.Tile, tree.Location)) return;
-            if (!isGrown)
-                tree.growthStage.Value = FruitTree.treeStage;
-            if (!isMature)
-                tree.daysUntilMature.Value = 0;
+            if (config.InstantlyGrowWhenInvalid || !FruitTree.IsGrowthBlocked(tree.Tile, tree.Location))
+            {
+                if (!isGrown)
+                    tree.growthStage.Value = FruitTree.treeStage;
+                if (!isMature)
+                    tree.daysUntilMature.Value = 0;
+            }
         }
 
         /// <summary>Age a fruit tree if it's eligible for aging.</summary>
         /// <param name="tree">The tree to grow.</param>
         private void AgeFruitTree(FruitTree tree)
         {
-            if (this.Config is null)
-                return;
-
             FruitTreeConfig config = this.Config.FruitTrees;
 
             // skip if can't be aged

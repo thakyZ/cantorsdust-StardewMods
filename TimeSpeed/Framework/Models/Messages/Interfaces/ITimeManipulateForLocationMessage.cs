@@ -1,7 +1,9 @@
+#nullable enable
+
 namespace TimeSpeed.Framework.Models.Messages.Interfaces
 {
     internal interface ITimeManipulateForLocationMessage : ITimeManipulateMessage
     {
-        public byte[] Location { get; init; }
+        public string? Location { get; init; }
     }
 }

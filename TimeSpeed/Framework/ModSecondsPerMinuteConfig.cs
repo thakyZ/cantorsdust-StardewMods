@@ -77,7 +77,7 @@ namespace TimeSpeed.Framework
         [OnDeserialized]
         private void OnDeserializedMethod(StreamingContext context)
         {
-            this.ByLocationName = new(this.ByLocationName ?? [], StringComparer.OrdinalIgnoreCase);
+            this.ByLocationName = new(this.ByLocationName ?? new(), StringComparer.OrdinalIgnoreCase);
         }
     }
 }

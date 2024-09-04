@@ -13,7 +13,7 @@ namespace AllProfessions.Framework
         ** Accessors
         *********/
         /// <summary>The profession names or IDs which shouldn't be added.</summary>
-        public HashSet<string> IgnoreProfessions { get; private set; } = [];
+        public HashSet<string> IgnoreProfessions { get; set; } = new();
 
 
         /*********
@@ -44,11 +44,12 @@ namespace AllProfessions.Framework
                     continue;
                 }
 
-                if (profession.ToString() == raw)
-                    continue;
-                this.IgnoreProfessions.Remove(raw);
-                this.IgnoreProfessions.Add(profession.ToString());
-                changed = true;
+                if (profession.ToString() != raw)
+                {
+                    this.IgnoreProfessions.Remove(raw);
+                    this.IgnoreProfessions.Add(profession.ToString());
+                    changed = true;
+                }
             }
 
             return changed;
@@ -63,7 +64,7 @@ namespace AllProfessions.Framework
         [OnDeserialized]
         private void OnDeserializedMethod(StreamingContext context)
         {
-            this.IgnoreProfessions = new HashSet<string>(this.IgnoreProfessions ?? [], StringComparer.OrdinalIgnoreCase);
+            this.IgnoreProfessions = new(this.IgnoreProfessions ?? new(), StringComparer.OrdinalIgnoreCase);
         }
     }
 }

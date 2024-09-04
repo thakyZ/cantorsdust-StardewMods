@@ -1,9 +1,10 @@
-using System.Text;
-using System.Text.RegularExpressions;
+using System;
 using StardewModdingAPI;
-using StardewValley;
+using StardewModdingAPI.Events;
 using TimeSpeed.Framework.Models.Enum;
 using TimeSpeed.Framework.Models.Messages;
+
+#nullable enable
 
 namespace TimeSpeed.Framework.Managers
 {
@@ -11,118 +12,49 @@ namespace TimeSpeed.Framework.Managers
     {
         private readonly IModHelper _helper;
         private readonly IMonitor _monitor;
+        private readonly Notifier _notifier;
         private readonly string _modID;
-        private const string Separator = "$/$";
-        private static readonly Regex separatorRegex = new(Regex.Escape(Separator));
 
-        public MessageManager(IMonitor monitor, IModHelper helper, string modID)
+        public MessageManager(IMonitor monitor, IModHelper helper, Notifier notifier, string modID)
         {
             this._monitor = monitor;
             this._helper = helper;
+            this._notifier = notifier;
             this._modID = modID;
         }
 
-        public void SendTimeManipulateMessage(Farmer farmer, FreezeTimeMethod freezeTimeMethod = FreezeTimeMethod.None, TickIntervalState tickIntervalState = TickIntervalState.None)
+        public void HandleIncomingMessage(ModMessageReceivedEventArgs e)
         {
-            if (farmer is null)
-                return;
-
-            var timeManipulateMessage = new TimeManipulateMessage {
-                FarmerID = farmer.UniqueMultiplayerID,
-                FreezeTimeMethod = freezeTimeMethod,
-                TickIntervalState = tickIntervalState,
-            };
-
-            this._helper.Multiplayer.SendMessage(timeManipulateMessage, nameof(MessageType.Manipulate), modIDs: [ this._modID ]);
-        }
-
-        public void SendTimeManipulateForLocationMessage(Farmer farmer, GameLocation? location, FreezeTimeMethod freezeTimeMethod = FreezeTimeMethod.None, TickIntervalState tickIntervalState = TickIntervalState.None)
-        {
-            if (farmer is null || location is null)
-                return;
-
-            var timeManipulateMessageForLocation = new TimeManipulateForLocationMessage
+            if (!Enum.TryParse(e.Type, out MessageType type))
             {
-                FarmerID = farmer.UniqueMultiplayerID,
-                FreezeTimeMethod = freezeTimeMethod,
-                TickIntervalState = tickIntervalState,
-                Location = ModEntry.GetIDFromLocation(location),
-            };
-
-            this._helper.Multiplayer.SendMessage(timeManipulateMessageForLocation, nameof(MessageType.ManipulateForLocation), modIDs: [ this._modID ]);
-        }
-
-        public void SendTimeStateReply(Farmer farmer, int timeout, string message)
-        {
-            if (farmer is null)
+                this._monitor.LogOnce($"Failed to handle incoming message with type {e.Type}", LogLevel.Trace);
                 return;
+            }
 
-            var _message = new TimeStateReplyMessage
+            switch (type)
             {
-                FarmerID = farmer.UniqueMultiplayerID,
-                Timeout = timeout,
-                Message = Encoding.Default.GetBytes(message),
-            };
-
-            this._helper.Multiplayer.SendMessage(_message, nameof(MessageType.StateReply), modIDs: [ this._modID ]);
-        }
-
-        public void SendTimeForbiddenMessage(Farmer? farmer, ForbiddenReason reason) {
-            if (farmer is null)
-                return;
-
-            var message = new TimeForbiddenMessage
-            {
-                FarmerID = farmer.UniqueMultiplayerID,
-                Reason = reason,
-            };
-
-            this._helper.Multiplayer.SendMessage(message, nameof(MessageType.Forbidden), modIDs: [ this._modID]);
-        }
-
-        public void SendTimeInfoMessage(Farmer? farmer, string message)
-        {
-            if (farmer is null)
-                return;
-
-            var _message = new TimeInfoMessage
-            {
-                FarmerID = farmer.UniqueMultiplayerID,
-                Message = Encoding.Default.GetBytes(message),
-            };
-
-            this._helper.Multiplayer.SendMessage(_message, nameof(MessageType.Info), modIDs: [ this._modID]);
-        }
-
-        public void SendTimeVotePauseMessage(Farmer? farmer, VoteCast voteCast = VoteCast.None, bool finish = false)
-        {
-            if (farmer is null)
-                return;
-
-            var message = new TimeVotePauseMessage
-            {
-                FarmerID = farmer.UniqueMultiplayerID,
-                VoteCast = voteCast,
-                Finish = finish,
-            };
-
-            this._helper.Multiplayer.SendMessage(message, nameof(MessageType.VotePause), modIDs: [ this._modID]);
-        }
-
-        public void SendTimeConfigStateMessage(Farmer? farmer, bool hostOnly = true, bool voteEnabled = false, double voteThreshold = 1.0)
-        {
-            if (farmer is null)
-                return;
-
-            var message = new TimeConfigStateMessage
-            {
-                FarmerID = farmer.UniqueMultiplayerID,
-                HostOnly= hostOnly,
-                VoteEnabled = voteEnabled,
-                VoteThreshold = voteThreshold,
-            };
-
-            this._helper.Multiplayer.SendMessage(message, nameof(MessageType.VotePause), modIDs: [ this._modID]);
+                case MessageType.Manipulate:
+                    this.ProcessTimeManipulateMessage(e.ReadAs<TimeManipulateMessage>());
+                    break;
+                case MessageType.ManipulateForLocation:
+                    this.ProcessTimeManipulateForLocationMessage(e.ReadAs<TimeManipulateForLocationMessage>());
+                    break;
+                case MessageType.StateReply:
+                    this.ProcessTimeStateReplyMessage(e.ReadAs<TimeStateReplyMessage>());
+                    break;
+                case MessageType.Forbidden:
+                    this.ProcessTimeForbiddenMessage(e.ReadAs<TimeForbiddenMessage>());
+                    break;
+                case MessageType.ConfigState:
+                    this.ProcessTimeConfigStateMessage(e.ReadAs<TimeConfigStateMessage>());
+                    break;
+                case MessageType.VotePause:
+                    this.ProcessTimeVotePauseMessage(e.ReadAs<TimeVotePauseMessage>());
+                    break;
+                case MessageType.Info:
+                    this.ProcessTimeInfoMessage(e.ReadAs<TimeInfoMessage>());
+                    break;
+            }
         }
     }
 }

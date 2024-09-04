@@ -21,7 +21,7 @@ namespace TimeSpeed.Framework
         /*********
         ** Public methods
         *********/
-        /// <summary>Construct an _instance.</summary>
+        /// <summary>Construct an instance.</summary>
         /// <param name="previousProgress">The previous progress value.</param>
         /// <param name="newProgress">The new progress value.</param>
         public TickProgressChangedEventArgs(double previousProgress, double newProgress)

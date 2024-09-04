@@ -3,8 +3,8 @@
     internal enum FreezeTimeMethod : byte
     {
         None = 0,
-        Toggle = 1,
+        Manual = 1,
         Location = 2,
-        Cutscene = 3,
+        Event = 3,
     }
 }

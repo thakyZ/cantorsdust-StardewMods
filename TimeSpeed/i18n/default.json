@@ -14,6 +14,9 @@
   // changed based on location
   "message.on-location-change.time-stopped-globally": "Looks like time stopped everywhere...",
   "message.on-location-change.time-stopped-here": "It feels like time is frozen here...",
+  "message.on-location-change.time-stopped-during-event": "{{hand}}, {{farmer}} has entered an event this, it feels like time is frozen here...",
+  "message.on-location-change.time-stopped-during-event.farm-hand": "Farmhand",
+  "message.on-location-change.time-stopped-during-event.farmer": "Farmer",
   "message.on-location-change.time-speed-here": "10 minutes feels more like {{seconds}} seconds here...",
 
   // messages displayed when the client fails to manually change.
@@ -23,6 +26,8 @@
 
   // more messages.
   "message.unknown": "message_unknown from {{farmer}}",
+  "message.on-state": "on",
+  "message.off-state": "off",
 
   // messages displayed to the client when the host changes a config option.
   "message.host-changed.host-only": "Host set host only mode to {{state}}.",

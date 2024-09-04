@@ -12,6 +12,9 @@ namespace TimeSpeed.Framework
         FrozenForLocation,
 
         /// <summary>Time was automatically frozen per <see cref="ModConfig.ShouldFreeze(int)"/>.</summary>
-        FrozenAtTime
+        FrozenAtTime,
+
+        /// <summary>Event was automatically frozen per <see cref="ModFreezeTimeConfig.DuringEvents"/>.</summary>
+        FrozenDuringEvent
     }
 }

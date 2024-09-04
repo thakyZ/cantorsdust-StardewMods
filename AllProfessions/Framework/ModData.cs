@@ -4,6 +4,6 @@ namespace AllProfessions.Framework
     internal class ModData
     {
         /// <summary>The professions to gain for each level.</summary>
-        public ModDataProfessions[] ProfessionsToGain { get; set; } = [];
+        public ModDataProfessions[] ProfessionsToGain { get; set; }
     }
 }

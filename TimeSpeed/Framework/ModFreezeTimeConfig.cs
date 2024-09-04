@@ -7,20 +7,11 @@ using StardewValley.Locations;
 namespace TimeSpeed.Framework
 {
     /// <summary>The mod configuration for where or when time should be frozen.</summary>
-    internal class ModFreezeTimeConfig
+    internal partial class ModFreezeTimeConfig
     {
         /*********
         ** Accessors
         *********/
-        /// <summary>Whether only the host can manipulate time.</summary>
-        public bool HostOnly { get; set; } = true;
-
-        /// <summary>Whether to use a voting system to allow clients to pause.</summary>
-        public bool ClientVote { get; set; } = false;
-
-        /// <summary>The threshold of how many yes votes to succeed on a client vote.</summary>
-        public double ClientVoteThreshold { get; set; } = 1.0;
-
         /// <summary>The time at which to freeze time everywhere (or <c>null</c> to disable this). This should be 24-hour military time (e.g. 800 for 8am, 1600 for 8pm, etc).</summary>
         public int? AnywhereAtTime { get; set; }
 

@@ -2,12 +2,13 @@
 {
     internal enum MessageType
     {
-        Unknown,
-        Manipulate,
-        ManipulateForLocation,
-        StateReply,
-        Forbidden,
-        VotePause,
-        Info,
+        Unknown = 0,
+        Manipulate = 1,
+        ManipulateForLocation = 2,
+        StateReply = 3,
+        Forbidden = 4,
+        VotePause = 5,
+        Info = 6,
+        ConfigState = 7,
     }
 }

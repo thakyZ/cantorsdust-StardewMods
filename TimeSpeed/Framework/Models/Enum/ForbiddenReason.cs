@@ -4,6 +4,7 @@
     {
         Unknown = 0,
         HostDisabled = 1,
-        HostError = 2
+        HostError = 2,
+        InEvent = 3,
     }
 }

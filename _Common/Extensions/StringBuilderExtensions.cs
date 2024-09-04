@@ -1,33 +1,51 @@
 using System;
-using System.Collections.Generic;
 using System.Text;
+
+#nullable enable
 
 namespace cantorsdust.Common.Extensions
 {
     internal static class StringBuilderExtensions
     {
-        public static StringBuilder AppendSimple<TSource>(this StringBuilder sb, TSource item) where TSource : notnull
+        public static StringBuilder AppendSimple<TSource>(this StringBuilder sb, TSource? item)
         {
-            if (item is bool bType)
+            if (item is null)
             {
-                sb.Append(bType ? "1" : "0");
+                sb.Append("null");
             }
-            else if (item is int iType)
+            else if (item is bool bValue)
             {
-                sb.Append($"i{iType}");
+                sb.Append(bValue ? "1" : "0");
             }
-            else if (item is long lType)
+            else if (item is int iValue)
             {
-                sb.Append($"l{lType}");
+                sb.Append($"i{iValue}");
+            }
+            else if (item is long lValue)
+            {
+                sb.Append($"l{lValue}");
+            }
+            else if (item is double dValue)
+            {
+                sb.Append($"d{dValue}");
+            }
+            else if (item is float fValue)
+            {
+                sb.Append($"f{fValue}");
             }
             else if (item is string sType)
             {
-                sb.Append($"s\"{sType}\"");
+                sb.Append($"s{sType}");
+            }
+            else if (item is Enum eType)
+            {
+                sb.Append($"e{Enum.GetName(typeof(TSource), eType)}");
             }
             else
             {
-                sb.Append($"o\"{item}\"");
+                sb.Append($"o{item}");
             }
+
             return sb;
         }
     }

@@ -23,15 +23,17 @@ namespace cantorsdust.Common
             foreach (string relativePath in relativePaths)
             {
                 string fullPath = Path.Combine(basePath, relativePath);
-                if (!File.Exists(fullPath)) continue;
-                try
+                if (File.Exists(fullPath))
                 {
-                    File.Delete(fullPath);
-                    mod.Monitor.Log($"Removed obsolete file '{relativePath}'.");
-                }
-                catch (Exception ex)
-                {
-                    mod.Monitor.Log($"Failed deleting obsolete file '{relativePath}':\n{ex}");
+                    try
+                    {
+                        File.Delete(fullPath);
+                        mod.Monitor.Log($"Removed obsolete file '{relativePath}'.");
+                    }
+                    catch (Exception ex)
+                    {
+                        mod.Monitor.Log($"Failed deleting obsolete file '{relativePath}':\n{ex}");
+                    }
                 }
             }
         }
