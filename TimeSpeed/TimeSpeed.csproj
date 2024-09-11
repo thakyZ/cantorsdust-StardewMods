@@ -2,6 +2,10 @@
   <PropertyGroup>
     <Version>2.7.7</Version>
     <TargetFramework>net6.0</TargetFramework>
+    <DebugType>PDBOnly</DebugType>
+    <DebugSymbols>True</DebugSymbols>
+    <Optimize>False</Optimize>
+    <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>
