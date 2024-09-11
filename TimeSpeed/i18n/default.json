@@ -44,6 +44,15 @@
   "config.location-notify.name": "Show time info on warp",
   "config.location-notify.desc": "Whether to show a message about the time settings when you enter a location.",
 
+  // mod integrations
+  "config.integrations": "Integrations",
+  "config.ui-info-suite-2-integration.name": "UIInfoSuite2 Integration",
+  "config.ui-info-suite=2-integration.desc": "Whether to show the time status on the UIInfoSuite2 icon bar.",
+  "config.ui-info-suite-2-integration.show-time-speed-icon.name": "Show Time Speed Icon",
+  "config.ui-info-suite=2-integration.show-time-speed-icon.desc": "Whether to show a time speed status icon.",
+  "config.ui-info-suite-2-integration.show-time-paused-icon.name": "Show Time Paused Icon",
+  "config.ui-info-suite-2-integration.show-time-paused-icon.desc": "Whether to show a time paused status icon.",
+
   // seconds per minute section
   "config.seconds-per-minute": "Seconds per minute",
   "config.indoors-speed.name": "Indoors",
@@ -93,5 +102,11 @@
   "config.speed-up-time-key.name": "Speed up time",
   "config.speed-up-time-key.desc": "The key which speeds up time by one second per 10-game-minutes. Combine with Control for 100 seconds, Shift for 10 seconds, or Alt for 0.1 seconds.",
   "config.reload-key.name": "Reload config",
-  "config.reload-key.desc": "The key which reloads all values from the config file and applies them immediately. Time will stay frozen if it was frozen via hotkey."
+  "config.reload-key.desc": "The key which reloads all values from the config file and applies them immediately. Time will stay frozen if it was frozen via hotkey.",
+
+  /*********
+    ** Integrations
+    *********/
+  "integrations.ui-info-suite-2.time-paused-message.paused": "Time is currently paused",
+  "integrations.ui-info-suite-2.time-speed-message.changed": "10 minutes feels more like {{seconds}} seconds here..."
 }
