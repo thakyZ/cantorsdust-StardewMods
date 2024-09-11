@@ -1,7 +1,8 @@
 {
   "cSpell.words": [
-    "cantorsdust",
-  ],
+    "Annosz",
+    "cantorsdust"
+],
   "editor.indentSize": 4,
   "files.associations": {
     "*.json": "jsonc"
