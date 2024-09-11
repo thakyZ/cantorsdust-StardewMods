@@ -1,9 +1,8 @@
 #nullable enable
 
-namespace TimeSpeed.Framework.Models.Messages.Interfaces
+namespace TimeSpeed.Framework.Models.Messages.Interfaces;
+
+internal interface ITimeManipulateForLocationMessage : ITimeManipulateMessage
 {
-    internal interface ITimeManipulateForLocationMessage : ITimeManipulateMessage
-    {
-        public string? Location { get; init; }
-    }
+    public string? Location { get; init; }
 }

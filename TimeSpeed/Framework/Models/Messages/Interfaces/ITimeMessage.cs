@@ -1,7 +1,6 @@
-namespace TimeSpeed.Framework.Models.Messages.Interfaces
+namespace TimeSpeed.Framework.Models.Messages.Interfaces;
+
+internal interface ITimeMessage
 {
-    internal interface ITimeMessage
-    {
-        public long FarmerID { get; init; }
-    }
+    public long FarmerID { get; init; }
 }

@@ -1,9 +1,8 @@
-namespace TimeSpeed.Framework.Models.Messages.Interfaces
+namespace TimeSpeed.Framework.Models.Messages.Interfaces;
+
+internal interface ITimeConfigStateMessage : ITimeMessage
 {
-    internal interface ITimeConfigStateMessage : ITimeMessage
-    {
-        public bool? HostOnly { get; init; }
-        public bool? VoteEnabled { get; init; }
-        public double? VoteThreshold { get; init; }
-    }
+    public bool? HostOnly { get; init; }
+    public bool? VoteEnabled { get; init; }
+    public double? VoteThreshold { get; init; }
 }

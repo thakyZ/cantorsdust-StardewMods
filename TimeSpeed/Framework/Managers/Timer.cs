@@ -1,84 +1,159 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 
-#nullable enable
+using StardewModdingAPI;
+using StardewModdingAPI.Events;
 
-namespace TimeSpeed.Framework.Managers
+namespace TimeSpeed.Framework.Managers;
+
+public sealed class Timer : IDisposable
 {
-    internal class Timer
+    /// <summary>List pf instanced timers.</summary>
+    private static HashSet<Timer> Timers { get; } = [];
+
+    // ReSharper disable once RedundantDefaultMemberInitializer
+    // ReSharper disable once MemberCanBePrivate.Global
+    /// <summary>Determines if the timer has been started.</summary>
+    public bool Started { get; private set; } = false;
+
+    // ReSharper disable once RedundantDefaultMemberInitializer
+    /// <summary>Determines if the timer is currently running.</summary>
+    public bool Running { get; private set; } = false;
+
+    // ReSharper disable once RedundantDefaultMemberInitializer
+    // ReSharper disable once MemberCanBePrivate.Global
+    /// <summary>Determines if the timer has finished.</summary>
+    public bool Finished { get; private set; } = false;
+
+    // ReSharper disable once UnusedMember.Global
+    /// <summary>Determines if the timer has finished or started but not running.</summary>
+    public bool FinishedOrStarted => this.Started || this.Finished;
+
+    /// <summary>Fires an event when a property has changed.</summary>
+    private event EventHandler<PropertyChangedEventArgs>? PropertyChanged;
+
+    /// <summary>Fires an event when the timer has been finished.</summary>
+    public event EventHandler? OnFinished;
+
+    // ReSharper disable once MemberCanBePrivate.Global
+    /// <summary>The length in time of seconds that the timer lasts for.</summary>
+    public ulong Length { get; }
+
+    /// <summary>An instanced <see cref="IModHelper"/> for use with disposing and instancing.</summary>
+    private static IModHelper? Helper { get; set; }
+
+    // ReSharper disable once RedundantDefaultMemberInitializer
+    /// <summary>The current count in the counter.</summary>
+    private ulong _counter = 0;
+
+    /// <summary>Determines if this timer has been disposed.</summary>
+    private bool isDisposed;
+
+    /// <summary>Gets the current second count in the timer.</summary>
+    private ulong Counter
     {
-        private static List<Timer> Timers { get; } = [];
-        public bool Started { get; private set; } = false;
-        public bool Running { get; private set; } = false;
-        public bool Finished { get; private set; } = false;
-        public bool FinishedOrStarted => this.Started || this.Finished;
-        private event PropertyChangedEventHandler? PropertyChanged;
-        public event EventHandler? OnFinished;
-        public ulong Length { get; init; }
-        private ulong _counter = 0;
-        private ulong Counter
+        get => this._counter;
+        set
         {
-            get => this._counter;
-            set
-            {
-                this._counter = value;
-                this.OnPropertyChangedHandler();
-            }
+            this._counter = value;
+            this.OnPropertyChangedHandler();
         }
+    }
 
-        private void OnPropertyChangedHandler() {
-            if (PropertyChanged is not null)
-                PropertyChanged?.Invoke(null, new PropertyChangedEventArgs(nameof(Timer.Counter)));
-        }
+    /// <summary>Creates a new instance of this class.</summary>
+    /// <param name="length">THe length in time in seconds.</param>
+    /// <param name="helper">An instanced <see cref="IModHelper"/> class.</param>
+    public Timer(byte length, IModHelper helper) {
+        Timer.Helper                                 =  helper;
+        helper.Events.GameLoop.OneSecondUpdateTicked += this.OnOneSecondUpdateTicked;
+        this.Length                                  =  length;
+        this.PropertyChanged                         += this.OnPropertyChanged;
+        Timer.Timers.Add(this);
+    }
 
-        private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e)
-        {
-            if (this.Counter >= this.Length) {
-                this.End();
-                this.Finished = true;
-                OnFinished?.Invoke(null, new EventArgs());
-            }
-        }
+    /// <summary>Method to be able to call <see cref="PropertyChangedEventHandler"/>.</summary>
+    private void OnPropertyChangedHandler() {
+        this.PropertyChanged?.Invoke(null, new(nameof(Timer.Counter)));
+    }
 
-        public Timer(byte length)
-        {
-            this.Length = length * 60UL * 60UL * 1_000UL;
-            PropertyChanged += this.OnPropertyChanged;
-            Timer.Timers.Add(this);
-        }
+    /// <summary>Fired upon a property in this class being changed.</summary>
+    /// <inheritdoc cref="PropertyChangedEventHandler"/>
+    /// <param name="sender">The event sender.</param>
+    /// <param name="e">The event arguments.</param>
+    private void OnPropertyChanged(object? sender, PropertyChangedEventArgs e) {
+        if (this.Counter < this.Length) return;
 
-        public void Start() {
-            this.Started = true;
-            this.Running = true;
-        }
+        this.End();
+        this.Finished = true;
+        this.OnFinished?.Invoke(null, EventArgs.Empty);
+    }
 
-        public void End() {
-            this.Started = false;
-            this.Running = false;
-        }
+    /// <inheritdoc cref="IGameLoopEvents.OneSecondUpdateTicked"/>
+    /// <param name="sender">The event sender.</param>
+    /// <param name="e">The event arguments.</param>
+    private void OnOneSecondUpdateTicked(object? sender, OneSecondUpdateTickedEventArgs e) {
+        this.IncrementTimer();
+    }
 
-        public void Reset() {
-            if (this.Started)
-                this.End();
-            this.Counter = 0;
-        }
+    /// <summary>Start the timer increment count.</summary>
+    public void Start() {
+        this.Started = true;
+        this.Running = true;
+    }
 
-        private void IncrementTimer()
-        {
-            if (this.Started)
-                this.Counter++;
-        }
+    /// <summary>End the timer from incrementing.</summary>
+    public void End() {
+        this.Started = false;
+        this.Running = false;
+    }
 
-        public static void IncrementTimers()
-        {
-            Timers.ForEach(x => x.IncrementTimer());
-        }
+    // ReSharper disable once UnusedMember.Global
+    /// <summary>Reset the timer by ending then reseting the counter to 0.</summary>
+    public void Reset() {
+        if (this.Started)
+            this.End();
 
-        public static void Dispose()
-        {
-            Timer.Timers.ForEach(x => x.End());
-            Timer.Timers.Clear();
-        }
+        this.Counter = 0;
+    }
+
+    /// <summary>Increment the tick of this client</summary>
+    private void IncrementTimer()
+    {
+        if (this.Started)
+            this.Counter++;
+    }
+
+    /// <inheritdoc cref="IDisposable.Dispose"/>
+    public void Dispose()
+    {
+        this.Dispose(true);
+        GC.SuppressFinalize(this);
+    }
+
+    /// <inheritdoc cref="IDisposable.Dispose"/>
+    /// <param name="disposing">dispose of managed items.</param>
+    [SuppressMessage("Major Code Smell", "S1172:Unused method parameters should be removed")]
+    [SuppressMessage("Roslynator",       "RCS1163:Unused parameter")]
+    [SuppressMessage("ReSharper",        "UnusedParameter.Local")]
+    private void Dispose(bool disposing) {
+        if (this.isDisposed) return;
+
+        if (Timer.Helper is not null)
+            Timer.Helper.Events.GameLoop.OneSecondUpdateTicked -= this.OnOneSecondUpdateTicked;
+
+        this.End();
+        this.isDisposed = true;
+    }
+
+    // ReSharper disable once UnusedMember.Global
+    /// <summary>Dispose all timers.</summary>
+    public static void DisposeAll()
+    {
+        foreach (Timer timer in Timer.Timers)
+            timer.Dispose();
+
+        Timer.Timers.Clear();
     }
 }

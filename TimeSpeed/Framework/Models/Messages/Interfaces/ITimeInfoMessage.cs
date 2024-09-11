@@ -1,9 +1,8 @@
 #nullable enable
 
-namespace TimeSpeed.Framework.Models.Messages.Interfaces
+namespace TimeSpeed.Framework.Models.Messages.Interfaces;
+
+internal interface ITimeInfoMessage : ITimeMessage
 {
-    internal interface ITimeInfoMessage : ITimeMessage
-    {
-        public string? Message { get; init; }
-    }
+    public string? Message { get; init; }
 }

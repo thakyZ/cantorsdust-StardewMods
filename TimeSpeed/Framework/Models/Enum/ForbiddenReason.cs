@@ -1,10 +1,9 @@
-﻿namespace TimeSpeed.Framework.Models.Enum
+﻿namespace TimeSpeed.Framework.Models.Enum;
+
+public enum ForbiddenReason : byte
 {
-    public enum ForbiddenReason : byte
-    {
-        Unknown = 0,
-        HostDisabled = 1,
-        HostError = 2,
-        InEvent = 3,
-    }
+    Unknown = 0,
+    HostDisabled = 1,
+    HostError = 2,
+    InEvent = 3,
 }
