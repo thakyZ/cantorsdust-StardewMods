@@ -2,13 +2,12 @@ using System.Diagnostics.CodeAnalysis;
 
 #nullable enable
 
-namespace cantorsdust.Common.Extensions
+namespace cantorsdust.Common.Extensions;
+
+public static class StringExtensions
 {
-    public static class StringExtensions
+    public static bool IsNullOrEmptyOrWhiteSpace([NotNullWhen(false)] this string? value)
     {
-        public static bool IsNullOrEmptyOrWhiteSpace([NotNullWhen(false)] this string? value)
-        {
-            return string.IsNullOrWhiteSpace(value) || string.IsNullOrEmpty(value);
-        }
+        return string.IsNullOrWhiteSpace(value) || string.IsNullOrEmpty(value);
     }
 }
